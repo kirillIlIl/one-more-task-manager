@@ -12,7 +12,7 @@ export class TaskRepository {
     this.repository = dataSource.getRepository(Task);
   }
 
-  async getAll(): Promise<Task[]> {
+  async getAllTasks(): Promise<Task[]> {
     return this.repository.find();
   }
 
@@ -33,10 +33,16 @@ export class TaskRepository {
     return task;
   }
 
-  async deleteTask(id: string): Promise<void> {
+  async deleteTask(id: string): Promise<boolean> {
     const result = await this.repository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException(`Task with ID ${id} was not found`);
+    return result.affected !== 0;
+  }
+
+  async updateTask(id: string, status: TaskStatus): Promise<Task | null> {
+    const updated = await this.repository.update(id, { status });
+    if (updated.affected === 0) {
+      return null;
     }
+    return await this.getTaskById(id);
   }
 }
