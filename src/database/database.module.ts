@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Task } from '../tasks/task.entity';
 import * as process from 'node:process';
 import * as dotenv from 'dotenv';
+import { User } from '../auth/user.entity';
 
 dotenv.config();
 
@@ -14,8 +15,8 @@ dotenv.config();
       port: 5432,
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
-      database: 'task-managment',
-      entities: [Task],
+      database: 'postgres',
+      entities: [Task, User],
       synchronize: true,
     }),
   ],
