@@ -15,7 +15,7 @@ dotenv.config();
       port: 5432,
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
-      database: 'postgres',
+      database: 'task-manager',
       entities: [Task, User],
       synchronize: true,
     }),

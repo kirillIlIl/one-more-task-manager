@@ -1,7 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
+import { isQueryFailedErrorWithCode } from '../helpers';
 
 @Injectable()
 export class UserRepository {
@@ -18,6 +23,13 @@ export class UserRepository {
       password,
     });
 
-    await this.repository.save(user);
+    try {
+      await this.repository.save(user);
+    } catch (error) {
+      if (isQueryFailedErrorWithCode(error) && error.code === '23505') {
+        throw new ConflictException('Username already exists');
+      }
+      throw new InternalServerErrorException();
+    }
   }
 }
