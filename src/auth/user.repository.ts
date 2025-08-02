@@ -39,13 +39,13 @@ export class UserRepository {
     }
   }
 
-  async signIn(authCredentialsDto: AuthCredentialsDto): Promise<string> {
+  async signIn(authCredentialsDto: AuthCredentialsDto): Promise<string | null> {
     const { username, password } = authCredentialsDto;
     const user = await this.repository.findOneBy({ username });
     if (user && (await bcrypt.compare(password, user.password))) {
-      return 'success';
+      return username;
     } else {
-      throw new UnauthorizedException('Please check your credentials');
+      return null;
     }
   }
 }
